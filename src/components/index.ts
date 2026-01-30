@@ -9,7 +9,9 @@ export { Blob } from './Blob';
 
 // Stage view for timeline navigation
 export { StageView } from './StageView';
-export type { StageType } from './StageView';
+
+// Re-export StageType from canonical source
+export type { StageType } from '../models/mark2Types';
 
 // Legacy components (maintained for compatibility)
 export { Timeline } from './Timeline';

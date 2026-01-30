@@ -8,9 +8,11 @@
  * - Left/Right: Move through lot timeline stages
  * - Up: Access inventory/user layer
  * - Down: Access global view/network layer
+ *
+ * Uses refs for callbacks to avoid stale closure issues in PanResponder.
  */
 
-import { useRef, useCallback } from 'react';
+import { useRef, useCallback, useEffect } from 'react';
 import {
   Animated,
   PanResponder,
@@ -61,6 +63,49 @@ export function useSwipeNavigation(
     elasticBoundaries = true,
   } = options;
 
+  // Store callbacks in refs to avoid stale closures in PanResponder
+  const callbacksRef = useRef({
+    onSwipeLeft,
+    onSwipeRight,
+    onSwipeUp,
+    onSwipeDown,
+  });
+
+  const optionsRef = useRef({
+    disableLeft,
+    disableRight,
+    disableUp,
+    disableDown,
+    elasticBoundaries,
+  });
+
+  // Update refs when options change
+  useEffect(() => {
+    callbacksRef.current = {
+      onSwipeLeft,
+      onSwipeRight,
+      onSwipeUp,
+      onSwipeDown,
+    };
+    optionsRef.current = {
+      disableLeft,
+      disableRight,
+      disableUp,
+      disableDown,
+      elasticBoundaries,
+    };
+  }, [
+    onSwipeLeft,
+    onSwipeRight,
+    onSwipeUp,
+    onSwipeDown,
+    disableLeft,
+    disableRight,
+    disableUp,
+    disableDown,
+    elasticBoundaries,
+  ]);
+
   // Animation values for gesture tracking
   const translateX = useRef(new Animated.Value(0)).current;
   const translateY = useRef(new Animated.Value(0)).current;
@@ -87,51 +132,61 @@ export function useSwipeNavigation(
   }, [translateX, translateY]);
 
   // Determine swipe direction from gesture
-  const getSwipeDirection = (
-    gestureState: PanResponderGestureState
-  ): SwipeDirection => {
-    const { dx, dy, vx, vy } = gestureState;
-    const absDx = Math.abs(dx);
-    const absDy = Math.abs(dy);
+  const getSwipeDirection = useCallback(
+    (gestureState: PanResponderGestureState): SwipeDirection => {
+      const { dx, dy } = gestureState;
+      const absDx = Math.abs(dx);
+      const absDy = Math.abs(dy);
 
-    // Check minimum distance
-    if (absDx < gestures.swipe.minDistance && absDy < gestures.swipe.minDistance) {
-      return null;
-    }
+      // Check minimum distance
+      if (
+        absDx < gestures.swipe.minDistance &&
+        absDy < gestures.swipe.minDistance
+      ) {
+        return null;
+      }
 
-    // Check angle tolerance - ensure gesture is primarily in one direction
-    const angle = Math.atan2(absDy, absDx) * (180 / Math.PI);
-    const isHorizontal = angle < gestures.swipe.angleTolerance;
-    const isVertical = angle > (90 - gestures.swipe.angleTolerance);
+      // Check angle tolerance - ensure gesture is primarily in one direction
+      const angle = Math.atan2(absDy, absDx) * (180 / Math.PI);
+      const isHorizontal = angle < gestures.swipe.angleTolerance;
+      const isVertical = angle > 90 - gestures.swipe.angleTolerance;
 
-    if (!isHorizontal && !isVertical) {
-      return null; // Diagonal swipe, ignore
-    }
+      if (!isHorizontal && !isVertical) {
+        return null; // Diagonal swipe, ignore
+      }
 
-    if (isHorizontal) {
-      return dx > 0 ? 'right' : 'left';
-    } else {
-      return dy > 0 ? 'down' : 'up';
-    }
-  };
+      if (isHorizontal) {
+        return dx > 0 ? 'right' : 'left';
+      } else {
+        return dy > 0 ? 'down' : 'up';
+      }
+    },
+    []
+  );
 
-  // Check if direction is allowed
-  const isDirectionAllowed = (direction: SwipeDirection): boolean => {
-    switch (direction) {
-      case 'left':
-        return !disableLeft && !!onSwipeLeft;
-      case 'right':
-        return !disableRight && !!onSwipeRight;
-      case 'up':
-        return !disableUp && !!onSwipeUp;
-      case 'down':
-        return !disableDown && !!onSwipeDown;
-      default:
-        return false;
-    }
-  };
+  // Check if direction is allowed (using refs for current values)
+  const isDirectionAllowed = useCallback(
+    (direction: SwipeDirection): boolean => {
+      const opts = optionsRef.current;
+      const cbs = callbacksRef.current;
 
-  // Create pan responder
+      switch (direction) {
+        case 'left':
+          return !opts.disableLeft && !!cbs.onSwipeLeft;
+        case 'right':
+          return !opts.disableRight && !!cbs.onSwipeRight;
+        case 'up':
+          return !opts.disableUp && !!cbs.onSwipeUp;
+        case 'down':
+          return !opts.disableDown && !!cbs.onSwipeDown;
+        default:
+          return false;
+      }
+    },
+    []
+  );
+
+  // Create pan responder (using refs to get current callback values)
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
@@ -146,24 +201,24 @@ export function useSwipeNavigation(
 
       onPanResponderMove: (_, gestureState) => {
         const { dx, dy } = gestureState;
-        const direction = getSwipeDirection(gestureState);
+        const opts = optionsRef.current;
 
         // Apply elastic resistance if direction is disabled
         let adjustedDx = dx;
         let adjustedDy = dy;
 
-        if (elasticBoundaries) {
-          if ((dx > 0 && disableRight) || (dx < 0 && disableLeft)) {
+        if (opts.elasticBoundaries) {
+          if ((dx > 0 && opts.disableRight) || (dx < 0 && opts.disableLeft)) {
             adjustedDx = dx * 0.3; // Elastic resistance
           }
-          if ((dy > 0 && disableDown) || (dy < 0 && disableUp)) {
+          if ((dy > 0 && opts.disableDown) || (dy < 0 && opts.disableUp)) {
             adjustedDy = dy * 0.3;
           }
         } else {
-          if ((dx > 0 && disableRight) || (dx < 0 && disableLeft)) {
+          if ((dx > 0 && opts.disableRight) || (dx < 0 && opts.disableLeft)) {
             adjustedDx = 0;
           }
-          if ((dy > 0 && disableDown) || (dy < 0 && disableUp)) {
+          if ((dy > 0 && opts.disableDown) || (dy < 0 && opts.disableUp)) {
             adjustedDy = 0;
           }
         }
@@ -176,28 +231,35 @@ export function useSwipeNavigation(
       onPanResponderRelease: (_, gestureState) => {
         const duration = Date.now() - gestureStartTime.current;
         const direction = getSwipeDirection(gestureState);
+        const cbs = callbacksRef.current;
 
         // Check if swipe meets criteria
         const meetsDistanceThreshold =
-          Math.abs(gestureState.dx) > SCREEN_WIDTH * gestures.swipe.snapThreshold ||
-          Math.abs(gestureState.dy) > SCREEN_HEIGHT * gestures.swipe.snapThreshold;
+          Math.abs(gestureState.dx) >
+            SCREEN_WIDTH * gestures.swipe.snapThreshold ||
+          Math.abs(gestureState.dy) >
+            SCREEN_HEIGHT * gestures.swipe.snapThreshold;
 
         const meetsTimeThreshold = duration < gestures.swipe.maxDuration;
 
-        if (direction && isDirectionAllowed(direction) && (meetsDistanceThreshold || meetsTimeThreshold)) {
-          // Execute swipe action
+        if (
+          direction &&
+          isDirectionAllowed(direction) &&
+          (meetsDistanceThreshold || meetsTimeThreshold)
+        ) {
+          // Execute swipe action using current callback refs
           switch (direction) {
             case 'left':
-              onSwipeLeft?.();
+              cbs.onSwipeLeft?.();
               break;
             case 'right':
-              onSwipeRight?.();
+              cbs.onSwipeRight?.();
               break;
             case 'up':
-              onSwipeUp?.();
+              cbs.onSwipeUp?.();
               break;
             case 'down':
-              onSwipeDown?.();
+              cbs.onSwipeDown?.();
               break;
           }
         }

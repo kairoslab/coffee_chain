@@ -128,21 +128,20 @@ export const blobSize = {
 
 export const shapes = {
   // Circle (default) - complete, neutral, organic
+  // Note: borderRadius is calculated as size/2 in components
   circle: {
-    borderRadius: '50%',
-    clipPath: undefined,
+    borderRadiusRatio: 0.5, // 50% of size
   },
 
   // Square - structured data, verified, processed
   square: {
-    borderRadius: 10,
-    clipPath: undefined,
+    borderRadiusRatio: 0.1, // 10% of size for rounded corners
   },
 
   // Triangle - alerts, flags, incomplete data
+  // Implemented via SVG in components for proper rendering
   triangle: {
-    borderRadius: 0,
-    clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)',
+    borderRadiusRatio: 0,
   },
 } as const;
 

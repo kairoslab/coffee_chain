@@ -4,7 +4,7 @@
  * Displays a single supply chain stage following the "one feature per screen"
  * principle. Shows stage label, lot blob, and data hierarchy.
  *
- * Layout:
+ * Layout (per spec section 6.4):
  * 1. Stage identification (top)
  * 2. Lot blob (center, interactive)
  * 3. Primary data value (large, prominent)
@@ -14,31 +14,15 @@
  */
 
 import React from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Dimensions,
-  Animated,
-} from 'react-native';
+import { View, Text, StyleSheet, Dimensions, Animated } from 'react-native';
 import { Blob } from './Blob';
 import { colors, typography, spacing, ShapeType } from '../theme';
+import { StageType, STAGE_LABELS } from '../models/mark2Types';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
-// Stage types matching the supply chain
-export type StageType =
-  | 'harvest'
-  | 'processing'
-  | 'drying'
-  | 'milling'
-  | 'export'
-  | 'shipping'
-  | 'import'
-  | 'warehousing'
-  | 'roasting'
-  | 'retail'
-  | 'cupping';
+// Re-export StageType for convenience
+export type { StageType };
 
 interface StageViewProps {
   // Stage information
@@ -71,21 +55,6 @@ interface StageViewProps {
   translateY?: Animated.Value;
 }
 
-// Human-readable stage labels
-const STAGE_LABELS: Record<StageType, string> = {
-  harvest: 'HARVEST',
-  processing: 'PROCESSING',
-  drying: 'DRYING',
-  milling: 'MILLING',
-  export: 'EXPORT',
-  shipping: 'SHIPPING',
-  import: 'IMPORT',
-  warehousing: 'WAREHOUSING',
-  roasting: 'ROASTING',
-  retail: 'RETAIL',
-  cupping: 'CUPPING',
-};
-
 export function StageView({
   stage,
   stageIndex,
@@ -104,20 +73,21 @@ export function StageView({
   translateY,
 }: StageViewProps) {
   // Create animated style if translation values are provided
-  const animatedStyle = translateX && translateY
-    ? {
-        transform: [
-          { translateX },
-          { translateY },
-        ],
-      }
-    : {};
+  const animatedStyle =
+    translateX && translateY
+      ? {
+          transform: [{ translateX }, { translateY }],
+        }
+      : {};
+
+  // Get human-readable stage label (uppercase for display)
+  const stageLabel = STAGE_LABELS[stage]?.toUpperCase() || stage.toUpperCase();
 
   return (
     <Animated.View style={[styles.container, animatedStyle]}>
       {/* Stage Label */}
       <View style={styles.stageHeader}>
-        <Text style={styles.stageLabel}>{STAGE_LABELS[stage]}</Text>
+        <Text style={styles.stageLabel}>{stageLabel}</Text>
       </View>
 
       {/* Main Content Area */}

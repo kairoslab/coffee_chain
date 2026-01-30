@@ -2,38 +2,37 @@
  * AppNavigator
  *
  * Main navigation container for the CoffeeChain app.
- * Implements swipe-based navigation between:
- * - Lot Timeline (horizontal swipe: stages)
- * - Inventory (swipe up)
- * - Global View (swipe down)
- * - Cupping Suite (swipe left past final stage)
+ * Implements lot-centric, swipe-based navigation:
+ *
+ * Navigation Layers:
+ * - Lot Timeline: Primary view showing single lot stages (horizontal swipe)
+ * - Inventory: User's tracked lots (swipe up from lot)
+ * - Global View: Network visualization (swipe down from lot)
+ * - Cupping Suite: Quality scoring (swipe left past final stage)
+ *
+ * Per spec: "The core premise: serious data presented through joyful, tactile
+ * interaction" and the primary view is lot-centric.
  */
 
 import React, { useState, useCallback, useMemo } from 'react';
-import {
-  View,
-  StyleSheet,
-  Dimensions,
-  StatusBar,
-} from 'react-native';
+import { View, Text, StyleSheet, StatusBar, Pressable } from 'react-native';
 import { LotTimelineScreen } from '../screens/LotTimelineScreen';
 import { InventoryScreen } from '../screens/InventoryScreen';
 import { CuppingScreen } from '../screens/CuppingScreen';
-import { colors } from '../theme';
+import { Blob } from '../components/Blob';
+import { colors, typography, spacing } from '../theme';
 import {
   Lot,
+  CuppingScores,
   calculateGrowthUnits,
   calculateVisibilityScore,
   getStageDisplayData,
-  STAGE_ORDER,
 } from '../models/mark2Types';
-
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 // Navigation layers
 type NavigationLayer = 'lot' | 'inventory' | 'global' | 'cupping';
 
-// Mock data for development
+// Mock data for development - in production, this comes from database
 const MOCK_LOTS: Lot[] = [
   {
     id: '1',
@@ -228,6 +227,7 @@ const MOCK_LOTS: Lot[] = [
 ];
 
 export function AppNavigator() {
+  // Navigation state
   const [currentLayer, setCurrentLayer] = useState<NavigationLayer>('inventory');
   const [selectedLotId, setSelectedLotId] = useState<string | null>(null);
   const [lots] = useState<Lot[]>(MOCK_LOTS);
@@ -265,47 +265,75 @@ export function AppNavigator() {
     return lots.map(lot => ({
       id: lot.id,
       externalId: lot.externalId,
-      name: `${lot.origin.farm || lot.origin.producer}`,
+      name: lot.origin.farm || lot.origin.producer,
       origin: `${lot.origin.region}, ${lot.origin.country}`,
       growthUnits: calculateGrowthUnits(lot),
       visibilityScore: calculateVisibilityScore(lot),
-      roastDate: lot.supplyChain.stages.find(s => s.type === 'roasting')?.timestamp,
+      roastDate: lot.supplyChain.stages.find(s => s.type === 'roasting')
+        ?.timestamp,
     }));
   }, [lots]);
 
-  // Navigation handlers
+  // ==========================================================================
+  // Navigation Handlers
+  // ==========================================================================
+
+  // From lot timeline: swipe up to inventory
   const handleNavigateToInventory = useCallback(() => {
     setCurrentLayer('inventory');
   }, []);
 
+  // From lot timeline: swipe down to global view
   const handleNavigateToGlobal = useCallback(() => {
     setCurrentLayer('global');
   }, []);
 
+  // From inventory: select a lot to view its timeline
   const handleSelectLot = useCallback((lotId: string) => {
     setSelectedLotId(lotId);
     setCurrentLayer('lot');
   }, []);
 
+  // From lot timeline: swipe left past final stage to cupping
   const handleNavigateToCupping = useCallback(() => {
     if (selectedLotId) {
       setCurrentLayer('cupping');
     }
   }, [selectedLotId]);
 
+  // From lot timeline: swipe right at first stage to return to inventory
+  const handleNavigateBack = useCallback(() => {
+    setCurrentLayer('inventory');
+  }, []);
+
+  // From cupping: complete session
   const handleCuppingComplete = useCallback(
-    (scores: Record<string, number>, total: number) => {
-      console.log('Cupping complete:', { scores, total });
+    (scores: CuppingScores, total: number) => {
+      // TODO: Save cupping session to database
+      console.log('Cupping complete:', { lotId: selectedLotId, scores, total });
       setCurrentLayer('lot');
     },
-    []
+    [selectedLotId]
   );
 
+  // From cupping: cancel/discard session
   const handleCuppingCancel = useCallback(() => {
     setCurrentLayer('lot');
   }, []);
 
-  // Render current layer
+  // From global view: return to lot
+  const handleReturnFromGlobal = useCallback(() => {
+    if (selectedLotId) {
+      setCurrentLayer('lot');
+    } else {
+      setCurrentLayer('inventory');
+    }
+  }, [selectedLotId]);
+
+  // ==========================================================================
+  // Render
+  // ==========================================================================
+
   const renderContent = () => {
     switch (currentLayer) {
       case 'inventory':
@@ -319,6 +347,7 @@ export function AppNavigator() {
 
       case 'lot':
         if (!timelineLot) {
+          // No lot selected - return to inventory
           setCurrentLayer('inventory');
           return null;
         }
@@ -327,6 +356,8 @@ export function AppNavigator() {
             lot={timelineLot}
             onNavigateToInventory={handleNavigateToInventory}
             onNavigateToGlobal={handleNavigateToGlobal}
+            onNavigateToCupping={handleNavigateToCupping}
+            onNavigateBack={handleNavigateBack}
           />
         );
 
@@ -338,17 +369,32 @@ export function AppNavigator() {
         return (
           <CuppingScreen
             lotId={selectedLot.id}
-            lotName={`${selectedLot.origin.farm || selectedLot.origin.producer}`}
+            lotName={selectedLot.origin.farm || selectedLot.origin.producer}
             onComplete={handleCuppingComplete}
             onCancel={handleCuppingCancel}
           />
         );
 
       case 'global':
-        // Placeholder for global view
+        // Global view placeholder - per spec section 8.3
         return (
-          <View style={styles.placeholder}>
-            {/* Global view placeholder - swipe up to return */}
+          <View style={styles.globalPlaceholder}>
+            <View style={styles.globalContent}>
+              <Text style={styles.globalTitle}>GLOBAL VIEW</Text>
+              <Blob size={80} variant="outlined" />
+              <Text style={styles.globalSubtitle}>
+                Network visualization coming soon
+              </Text>
+              <Text style={styles.globalHint}>
+                This will show lot relationships and supply chain connections
+              </Text>
+              <Pressable
+                style={styles.returnButton}
+                onPress={handleReturnFromGlobal}
+              >
+                <Text style={styles.returnButtonText}>Return</Text>
+              </Pressable>
+            </View>
           </View>
         );
 
@@ -370,9 +416,47 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.white,
   },
-  placeholder: {
+  globalPlaceholder: {
     flex: 1,
     backgroundColor: colors.white,
+  },
+  globalContent: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: spacing[4],
+  },
+  globalTitle: {
+    fontSize: typography.fontSize.sm,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.textSecondary,
+    letterSpacing: 2,
+    marginBottom: spacing[8],
+  },
+  globalSubtitle: {
+    fontSize: typography.fontSize.lg,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.textPrimary,
+    marginTop: spacing[4],
+  },
+  globalHint: {
+    fontSize: typography.fontSize.base,
+    color: colors.textMuted,
+    textAlign: 'center',
+    marginTop: spacing[2],
+    maxWidth: 280,
+  },
+  returnButton: {
+    marginTop: spacing[8],
+    paddingHorizontal: spacing[6],
+    paddingVertical: spacing[3],
+    backgroundColor: colors.black,
+    borderRadius: 8,
+  },
+  returnButtonText: {
+    fontSize: typography.fontSize.base,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.white,
   },
 });
 
