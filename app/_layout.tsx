@@ -1,9 +1,15 @@
-// Root layout with tab navigation
+/**
+ * CoffeeChain Root Layout
+ *
+ * LocoRoco-inspired coffee supply chain transparency app.
+ * Black and white interface with swipe-based navigation.
+ */
 
 import React, { useEffect, useState } from 'react';
-import { Tabs } from 'expo-router';
 import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
+import { Stack } from 'expo-router';
 import { initDatabase } from '../src/database/schema';
+import { colors, typography } from '../src/theme';
 
 export default function RootLayout() {
   const [isReady, setIsReady] = useState(false);
@@ -24,7 +30,11 @@ export default function RootLayout() {
   if (error) {
     return (
       <View style={styles.center}>
-        <Text style={styles.error}>Error: {error}</Text>
+        <View style={styles.errorBlob}>
+          <Text style={styles.errorBlobText}>!</Text>
+        </View>
+        <Text style={styles.errorTitle}>Something went wrong</Text>
+        <Text style={styles.errorText}>{error}</Text>
       </View>
     );
   }
@@ -32,67 +42,31 @@ export default function RootLayout() {
   if (!isReady) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator size="large" color="#2C1810" />
-        <Text style={styles.loading}>Loading CoffeeChain...</Text>
+        <View style={styles.loadingBlob}>
+          <ActivityIndicator size="small" color={colors.white} />
+        </View>
+        <Text style={styles.loading}>Loading...</Text>
       </View>
     );
   }
 
   return (
-    <Tabs
+    <Stack
       screenOptions={{
-        tabBarActiveTintColor: '#2C1810',
-        tabBarInactiveTintColor: '#9ca3af',
-        tabBarStyle: {
-          backgroundColor: '#fff',
-          borderTopColor: '#e5e7eb',
-        },
-        headerStyle: {
-          backgroundColor: '#2C1810',
-        },
-        headerTintColor: '#fff',
-        headerTitleStyle: {
-          fontWeight: '600',
-        },
+        headerShown: false,
+        contentStyle: { backgroundColor: colors.white },
+        animation: 'none',
       }}
     >
-      <Tabs.Screen
-        name="index"
+      <Stack.Screen name="index" />
+      <Stack.Screen
+        name="lot/[id]"
         options={{
-          title: 'Collection',
-          tabBarIcon: ({ color }) => <TabIcon name="☕" color={color} />,
+          presentation: 'card',
+          animation: 'slide_from_bottom',
         }}
       />
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <TabIcon name="🔍" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="add"
-        options={{
-          title: 'Add Lot',
-          tabBarIcon: ({ color }) => <TabIcon name="➕" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="profile"
-        options={{
-          title: 'Profile',
-          tabBarIcon: ({ color }) => <TabIcon name="👤" color={color} />,
-        }}
-      />
-    </Tabs>
-  );
-}
-
-function TabIcon({ name, color }: { name: string; color: string }) {
-  return (
-    <Text style={{ fontSize: 20, opacity: color === '#2C1810' ? 1 : 0.5 }}>
-      {name}
-    </Text>
+    </Stack>
   );
 }
 
@@ -101,15 +75,46 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: colors.white,
+    padding: 24,
+  },
+  loadingBlob: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: colors.black,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 16,
   },
   loading: {
-    marginTop: 16,
-    color: '#6b7280',
-    fontSize: 16,
+    color: colors.textSecondary,
+    fontSize: typography.fontSize.base,
+    fontWeight: typography.fontWeight.medium,
   },
-  error: {
-    color: '#ef4444',
-    fontSize: 16,
+  errorBlob: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: colors.black,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  errorBlobText: {
+    color: colors.white,
+    fontSize: typography.fontSize['2xl'],
+    fontWeight: typography.fontWeight.bold,
+  },
+  errorTitle: {
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.lg,
+    fontWeight: typography.fontWeight.semibold,
+    marginBottom: 8,
+  },
+  errorText: {
+    color: colors.textSecondary,
+    fontSize: typography.fontSize.base,
+    textAlign: 'center',
   },
 });
