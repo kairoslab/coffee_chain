@@ -1,0 +1,1048 @@
+================================================================================
+COFFEECHAIN IMPLEMENTATION PLAN
+LocoRoco-Inspired Coffee Supply Chain Transparency Application
+================================================================================
+
+Document Version: 1.0
+Last Updated: January 2025
+
+--------------------------------------------------------------------------------
+TABLE OF CONTENTS
+--------------------------------------------------------------------------------
+
+1. Project Overview
+2. Core Visual Language
+3. Shape-Shifting System
+4. Growth and Aggregation Mechanic
+5. Visibility Score System
+6. Navigation Architecture
+7. Cupping Suite
+8. Global View
+9. Technical Specifications
+10. Implementation Phases
+11. Open Questions
+
+================================================================================
+1. PROJECT OVERVIEW
+================================================================================
+
+CoffeeChain is a supply chain transparency application for specialty coffee that
+adopts the visual and interaction language of the video game LocoRoco. The app
+tracks coffee lots from harvest through roasting, displaying provenance data,
+cupping scores, and supply chain relationships through a playful, blob-based
+interface.
+
+The core premise: serious data presented through joyful, tactile interaction.
+
+Primary Users:
+- Coffee roasters tracking green coffee purchases
+- Importers managing lot portfolios
+- Producers documenting harvest and processing
+- Quality control professionals conducting cuppings
+
+--------------------------------------------------------------------------------
+Design Pillars
+--------------------------------------------------------------------------------
+
+1. Radical simplicity: one piece of information per screen
+2. Physicality: every element feels soft, alive, responsive
+3. Transparency as texture: data completeness is visible at a glance
+4. Black and white: no color, no emoji, clarity through form and motion
+
+================================================================================
+2. CORE VISUAL LANGUAGE
+================================================================================
+
+--------------------------------------------------------------------------------
+2.1 Geometric Foundation
+--------------------------------------------------------------------------------
+
+All visual elements reduce to simple geometric primitives:
+
+- Circles: default state, neutral, complete
+- Squares: structured data, processed stages, verified information
+- Triangles: alerts, flags, incomplete data, attention required
+
+No complex or ornate shapes. Legibility emerges from simplicity. Every form
+should be identifiable as a basic shape even when deformed by animation.
+
+--------------------------------------------------------------------------------
+2.2 Animation Principles
+--------------------------------------------------------------------------------
+
+Objects behave like gelatin or soft rubber:
+
+SQUASH AND STRETCH
+- Compression on impact or interaction
+- Elongation during movement
+- Volume preservation: if width increases, height decreases proportionally
+
+DEFORMATION TRIGGERS
+- User tap/press: immediate squish response
+- Swipe: elements stretch in swipe direction, snap back on release
+- Screen transition: elements compress, then expand into new view
+- Data loading: gentle pulsing wobble
+
+PHYSICS PARAMETERS (suggested starting values)
+- Stiffness: 180-220 (springy but not frantic)
+- Damping: 12-18 (settles quickly, no prolonged oscillation)
+- Mass: 1.0 (normalized)
+- Velocity threshold for squash: 0.5
+
+Animation library recommendation: React Spring or Framer Motion for React
+implementations. Both support physics-based spring animations with configurable
+stiffness and damping.
+
+--------------------------------------------------------------------------------
+2.3 Color and Style Constraints
+--------------------------------------------------------------------------------
+
+PALETTE
+- Primary: #000000 (black)
+- Secondary: #FFFFFF (white)
+- Grays for depth: #333333, #666666, #999999, #CCCCCC, #E5E5E5
+
+FORBIDDEN
+- Color of any kind (no hue, no saturation)
+- Emoji or emoticons
+- Iconography that relies on color distinction
+- Gradients with color (grayscale gradients permitted)
+
+TEXTURE AND DEPTH
+- Extremely subtle noise/grain overlay permitted (2% opacity)
+- No drop shadows for layering to preserve 2D effect.
+- Border thickness variations to indicate hierarchy. 
+
+TYPOGRAPHY
+- Single typeface family recommended
+- Suggested: Google Sans or Noto Sans or Bitcount Single.
+- Weight variations for hierarchy: 400 (body), 600 (labels), 700 (headings)
+- No italics; use weight and size for emphasis
+
+================================================================================
+3. SHAPE-SHIFTING SYSTEM
+================================================================================
+
+Inspired by LocoRoco's shape-changing mechanic, lots and data elements can
+transform based on context or data state.
+
+--------------------------------------------------------------------------------
+3.1 Default State
+--------------------------------------------------------------------------------
+
+All lots and primary data objects appear as circular blobs at rest. The circle
+represents completeness, neutrality, and the organic nature of coffee as an
+agricultural product.
+
+--------------------------------------------------------------------------------
+3.2 Contextual Transformation
+--------------------------------------------------------------------------------
+
+Certain views or data states trigger shape transformation:
+
+TRANSFORMATION TRIGGERS
+- Entering a specific view (e.g., cupping suite transforms blobs to squares)
+- Data state change (e.g., flagged lot becomes triangular)
+- User preference (e.g., "structured view" renders all as squares)
+
+TRANSFORMATION BEHAVIOR
+- Morph animation: 300-400ms ease-in-out
+- Shape persists within context
+- Returns to default (circle) when exiting context
+- Transformation should feel like the blob is being gently pressed into a mold
+
+--------------------------------------------------------------------------------
+3.3 Shape Semantic Mapping
+--------------------------------------------------------------------------------
+
+CIRCLE (default)
+- Standard lot representation
+- Complete data sets (Black Circle/ Type changes to white)
+- Neutral/unreviewed status (White Circle / Type is black)
+
+SQUARE
+- Processed or structured data view (Reading Square is White/ Type is black)
+- User input (Square remains white/ Type remains black / But there's a black dashes outline)
+- Verified/confirmed information
+- Cupping data and scores
+- Export documentation
+
+TRIANGLE
+- Alerts or flags requiring attention
+- Incomplete data (missing stages)
+- Discrepancies between reported and verified data
+- Urgent items in inventory
+
+IMPLEMENTATION NOTE
+Shape is a CSS/SVG property, not a component swap. Use border-radius
+manipulation and clip-path for smooth morphing:
+
+  circle:    border-radius: 50%
+  square:    border-radius: 8-12px (slightly rounded corners)
+  triangle:  clip-path: polygon(50% 0%, 0% 100%, 100% 100%)
+
+================================================================================
+4. GROWTH AND AGGREGATION MECHANIC
+================================================================================
+
+Inspired by LocoRoco eating berries to grow, lots visually expand as they
+accumulate data, verifications, or transaction history. A circular outline rests
+in the background when lot is in its standard representaion, suggesting the space
+that can be filled with further data input; i.e. a filled circle is ideally complete.
+This can be related to the visibility score (section 5) but a growth metric is provided
+at the moment.  
+
+--------------------------------------------------------------------------------
+4.1 Growth Representation
+--------------------------------------------------------------------------------
+
+DATA RICHNESS AS SIZE
+- Minimum size: lot with only basic identification (origin, ID)
+- Maximum size: fully documented lot with complete chain of custody
+
+GROWTH INCREMENTS
+- Each major data category adds one "unit" of growth
+- Maximum of 20 units (matching LocoRoco's cap)
+- Visual size scales logarithmically (early growth more noticeable)
+
+DATA CATEGORIES CONTRIBUTING TO GROWTH (1 unit each)
+1. Farm/producer identification
+2. Geographic coordinates
+3. Altitude documentation
+4. Varietal specification
+5. Harvest date range
+6. Processing method
+7. Drying method
+8. Moisture content reading
+9. Export documentation
+10. Shipping/logistics data
+11. Import documentation
+12. Warehouse/storage data
+13. Sample roast data
+14. Cupping score (official)
+15. Cupping score (user-submitted)
+16. Roast profile data
+17. Retail/distribution data
+18. End consumer feedback
+19. Certifications (organic, fair trade, etc.)
+20. Media/photos attached
+
+SIZE CALCULATION
+  growthUnits = count of populated data categories (0-20)
+  visualScale = 1 + (growthUnits * 0.05)  // ranges from 1.0 to 2.0
+  
+  Minimum diameter: 48px
+  Maximum diameter: 96px
+
+--------------------------------------------------------------------------------
+4.2 Split and Merge Interactions
+--------------------------------------------------------------------------------
+
+SPLIT (tap)
+- Single tap on a lot blob splits it into individual data points
+- Each data point becomes its own mini-blob
+- Mini-blobs arrange in a cluster or grid
+- Useful for examining specific stages or comparing components
+
+MERGE (hold)
+- Press and hold on split view
+- Individual blobs animate toward center
+- Coalesce into single summary blob
+- Returns to default lot view
+
+FORCED SPLIT POINTS
+- Entering detailed stage view forces split
+- Cupping comparison view shows split scores
+- Discrepancy review shows conflicting data as separate blobs
+
+ANIMATION TIMING
+- Split: 400ms staggered (each blob pops out sequentially)
+- Merge: 600ms convergent (all blobs move simultaneously to center)
+
+================================================================================
+5. VISIBILITY SCORE SYSTEM
+================================================================================
+
+The visibility score quantifies supply chain transparency based on data
+contributed by participants at each stage.
+
+--------------------------------------------------------------------------------
+5.1 Purpose and Definition
+--------------------------------------------------------------------------------
+
+Visibility Score: a 0-100 metric indicating how well-documented a lot's journey
+is from farm to cup.
+
+- 0-25: Opaque (minimal documentation)
+- 26-50: Partial (some stages documented)
+- 51-75: Transparent (most stages documented with verification)
+- 76-100: Fully Visible (complete documentation, multiple verifications)
+
+--------------------------------------------------------------------------------
+5.2 Calculation Methodology
+--------------------------------------------------------------------------------
+
+BASE SCORE (max 60 points)
+Each supply chain stage contributes points when documented:
+
+  Stage                     Points
+  ----------------------------------------
+  Farm/Producer             8
+  Harvest                   6
+  Processing                8
+  Drying                    6
+  Milling                   4
+  Export                    8
+  Shipping                  6
+  Import                    6
+  Warehousing               4
+  Roasting                  4
+  ----------------------------------------
+  Total possible:           60
+
+VERIFICATION BONUS (max 20 points)
+Third-party or cross-referenced verification adds points:
+
+  Verification Type         Points
+  ----------------------------------------
+  Certification body        5
+  Lab analysis              5
+  Multiple participant
+    confirmation            5
+  Photographic evidence     3
+  GPS/timestamp data        2
+  ----------------------------------------
+  Total possible:           20
+
+RECENCY BONUS (max 10 points)
+Data updated within relevant timeframes:
+
+  Update Recency            Points
+  ----------------------------------------
+  Within 30 days            10
+  Within 90 days            7
+  Within 180 days           4
+  Within 1 year             2
+  Older than 1 year         0
+  ----------------------------------------
+
+PARTICIPANT DIVERSITY BONUS (max 10 points)
+Number of unique participants contributing data:
+
+  Participants              Points
+  ----------------------------------------
+  5+ participants           10
+  4 participants            8
+  3 participants            6
+  2 participants            4
+  1 participant             2
+  ----------------------------------------
+
+FINAL CALCULATION
+  visibilityScore = baseScore + verificationBonus + recencyBonus + diversityBonus
+  visibilityScore = clamp(visibilityScore, 0, 100)
+
+--------------------------------------------------------------------------------
+5.3 Visual Representation
+--------------------------------------------------------------------------------
+
+Since color is prohibited, visibility manifests through form properties:
+
+OPACITY/SOLIDITY
+- High visibility (76-100): solid black fill, crisp edges
+- Good visibility (51-75): solid black fill, slight softness
+- Partial visibility (26-50): 70% opacity, softer edges
+- Low visibility (0-25): 40% opacity, diffuse/fuzzy edges
+
+EDGE TREATMENT
+- High visibility: clean, defined border (2px solid)
+- Decreasing visibility: increasingly wobbly/unstable border animation
+
+OPTIONAL: INTERNAL TEXTURE
+- High visibility: solid fill
+- Lower visibility: internal noise or stipple pattern suggesting uncertainty
+
+NUMERIC DISPLAY
+- Score displayed as integer (0-100) on tap or in detail view
+- Positioned below or beside the lot blob
+- Typography: 600 weight, same typeface as system
+
+================================================================================
+6. NAVIGATION ARCHITECTURE
+================================================================================
+
+Navigation uses swipe gestures in four cardinal directions, with each direction
+accessing a distinct layer of information.
+
+--------------------------------------------------------------------------------
+6.1 Horizontal Axis: Lot Timeline
+--------------------------------------------------------------------------------
+
+The primary view shows a single lot with one feature/stage visible at a time.
+
+SWIPE RIGHT: View Past Stages
+- Each swipe reveals the previous stage in the supply chain
+- Harvest → Processing → Drying → Milling → Export → Shipping → etc.
+- Animation: current view slides right, previous stage slides in from left
+- Edge case: at earliest stage (harvest), swipe right bounces back
+
+SWIPE LEFT: View Following Stages
+- Each swipe reveals the next stage in the supply chain
+- Continues through roasting, retail, etc.
+- Past final stage, enters Cupping Suite (see Section 7)
+
+STAGE INDICATOR
+- Minimal dots or dashes at screen bottom indicating position in timeline
+- Current stage slightly larger or bolder
+- No text labels in indicator; stage name appears in view itself
+
+TRANSITION ANIMATION
+- Duration: 300ms
+- Easing: ease-out for natural deceleration
+- Slight scale-down (0.95) of departing view
+- Slight scale-up (1.0 from 0.95) of arriving view
+
+--------------------------------------------------------------------------------
+6.2 Vertical Axis: Context Layers
+--------------------------------------------------------------------------------
+
+SWIPE UP: Inventory View
+- User's tracked/saved lots
+- Grid or list of lot blobs (size reflects data richness)
+- Profile settings button (top corner)
+- Connections to other users (collaborators, trade partners)
+
+Inventory sub-navigation:
+- Tap lot to open its timeline view
+- Filter controls (by origin, date, visibility score)
+- Search functionality
+
+SWIPE DOWN: Global View
+- Lot's position within world coffee supply network
+- Network visualization showing relationships to other lots
+- Deferred implementation (requires database architecture)
+- Placeholder: simple radial diagram showing origin region
+
+--------------------------------------------------------------------------------
+6.3 Interaction Reduction Principle
+--------------------------------------------------------------------------------
+
+CORE GESTURES (4 total)
+- Swipe left: forward in time/stages
+- Swipe right: backward in time/stages
+- Swipe up: inventory/user layer
+- Swipe down: global/network layer
+
+SECONDARY INTERACTIONS
+- Tap: select, split aggregated data, trigger squish response
+- Hold: merge split data, access contextual options
+- Pinch (optional): zoom in global view only
+
+ON-SCREEN BUTTONS (minimal)
+- Settings: accessible from inventory view only
+- Back/close: for modal or overlay dismissal
+- No persistent navigation bar or tab bar
+
+--------------------------------------------------------------------------------
+6.4 Screen Structure
+--------------------------------------------------------------------------------
+
+SINGLE FEATURE DISPLAY
+Each stage view shows exactly one primary piece of information:
+
+  Example: Processing Stage
+  ----------------------------------------
+  [                                      ]
+  [          PROCESSING                  ]  <- stage label
+  [                                      ]
+  [            ( O )                     ]  <- lot blob (squishable)
+  [                                      ]
+  [           Washed                     ]  <- primary data point
+  [                                      ]
+  [      Dumerso Washing Station         ]  <- secondary context
+  [                                      ]
+  [        72 hours fermentation         ]  <- tertiary detail
+  [                                      ]
+  [           · · ● · · ·                ]  <- timeline indicator
+  [                                      ]
+  ----------------------------------------
+
+INFORMATION HIERARCHY
+1. Stage identification (top)
+2. Lot blob (center, interactive)
+3. Primary data value (large, prominent)
+4. Secondary context (medium)
+5. Tertiary details (smaller, optional)
+6. Timeline position (bottom)
+
+================================================================================
+7. CUPPING SUITE
+================================================================================
+
+The Cupping Suite is accessed by swiping left past the final supply chain stage.
+It provides tools for conducting cupping protocols and comparing scores.
+Follows SCA-style cupping protocol.
+
+--------------------------------------------------------------------------------
+7.1 Entry and Exit
+--------------------------------------------------------------------------------
+
+ENTRY
+- Swipe left from final supply chain stage (typically Roasting or Retail)
+- Transition animation: current view recedes, cupping interface slides in
+- Visual cue: blob transforms from circle to square (structured data context)
+
+EXIT
+- Swipe right returns to supply chain timeline
+- Swipe up accesses inventory (same as elsewhere)
+- Blob returns to circular form on exit
+
+--------------------------------------------------------------------------------
+7.2 Cupping Protocol Interface
+--------------------------------------------------------------------------------
+
+PROTOCOL SELECTION
+- SCA standard cupping form (default)
+- Simplified scoring (optional)
+- Custom protocols (user-defined, future feature)
+
+ATTRIBUTE SCORING
+Each attribute scored on 0-10 scale via slider or tap increment:
+
+  Attributes (SCA Standard)
+  ----------------------------------------
+  Fragrance/Aroma
+  Flavor
+  Aftertaste
+  Acidity
+  Body
+  Balance
+  Uniformity
+  Clean Cup
+  Sweetness
+  Overall
+  ----------------------------------------
+
+INTERFACE BEHAVIOR
+- One attribute per screen (maintains single-feature principle)
+- Swipe left/right to navigate between attributes
+- Blob size/deformation reflects current score for attribute
+- Final screen: summary with total score
+
+SCORE ENTRY
+- Tap blob to increment by 0.25
+- Hold blob to decrement
+- Alternative: horizontal slider below blob
+
+--------------------------------------------------------------------------------
+7.3 Score Comparison
+--------------------------------------------------------------------------------
+
+After completing personal cupping, user can compare:
+
+COMPARISON VIEWS
+- Personal score vs. official lot score
+- Personal score vs. other users' scores (if connected)
+- Same lot, different roast profiles
+- Historical scores over time
+
+VISUAL TREATMENT
+- Split view: multiple blobs side by side
+- Size differential represents score differential
+- Tap any blob to see detailed breakdown
+
+--------------------------------------------------------------------------------
+7.4 Data Structure
+--------------------------------------------------------------------------------
+
+Cupping Session Object:
+{
+  sessionId: string,
+  odId: string,
+  userId: string,
+  timestamp: ISO 8601 datetime,
+  roastProfile: {
+    roastDate: date,
+    roastLevel: string,
+    roasterNotes: string
+  },
+  scores: {
+    fragrance: float (0-10),
+    flavor: float (0-10),
+    aftertaste: float (0-10),
+    acidity: float (0-10),
+    body: float (0-10),
+    balance: float (0-10),
+    uniformity: float (0-10),
+    cleanCup: float (0-10),
+    sweetness: float (0-10),
+    overall: float (0-10)
+  },
+  totalScore: float (0-100),
+  defects: {
+    taint: integer,
+    fault: integer
+  },
+  notes: string,
+  isPublic: boolean
+}
+
+================================================================================
+8. GLOBAL VIEW
+================================================================================
+
+The Global View shows a lot's relationships to other lots in the world supply.
+This feature is deferred pending database architecture decisions.
+
+--------------------------------------------------------------------------------
+8.1 Purpose
+--------------------------------------------------------------------------------
+
+- Visualize where a lot fits in the broader coffee supply network
+- Show connections: same origin, same importer, same roaster, etc.
+- Enable discovery of related lots
+
+--------------------------------------------------------------------------------
+8.2 Dependencies
+--------------------------------------------------------------------------------
+
+Before implementation, the following must be defined:
+
+DATABASE ARCHITECTURE
+- Lot-to-lot relationship schema
+- Participant (producer, exporter, importer, roaster) entity model
+- Geographic hierarchy (country → region → farm)
+
+RELATIONSHIP TYPES
+- Geographic proximity (same region, neighboring farms)
+- Supply chain overlap (same exporter, same importer)
+- Quality similarity (similar cupping profiles)
+- Temporal proximity (same harvest season)
+
+NETWORK QUERY PATTERNS
+- "Show all lots from this producer"
+- "Show all lots handled by this importer"
+- "Show lots with similar cupping profiles"
+
+--------------------------------------------------------------------------------
+8.3 Placeholder Implementation
+--------------------------------------------------------------------------------
+
+Until full network visualization is built:
+
+SIMPLE RADIAL VIEW
+- Central blob: current lot
+- Surrounding blobs: related lots (limited to 6-8)
+- Connecting lines indicate relationship type
+- Line thickness indicates strength of relationship
+
+RELATIONSHIP LABELS
+- Tap connecting line to see relationship type
+- Tap related lot to navigate to its timeline
+
+--------------------------------------------------------------------------------
+8.4 Future Visualization Concepts
+--------------------------------------------------------------------------------
+
+GEOGRAPHIC MAP
+- World map with origin regions as blob clusters
+- Drill down: country → region → farm
+- Lots represented as small blobs within regions
+
+SUPPLY CHAIN FLOW
+- Sankey-style diagram showing lot movement
+- Width indicates volume
+- Participants as nodes
+
+SIMILARITY CONSTELLATION
+- Lots positioned by cupping profile similarity
+- Closer blobs = more similar flavor profiles
+- Interactive: drag to reposition, pinch to zoom
+
+================================================================================
+9. TECHNICAL SPECIFICATIONS
+================================================================================
+
+--------------------------------------------------------------------------------
+9.1 Platform Targets
+--------------------------------------------------------------------------------
+
+PRIMARY: Mobile Web (Progressive Web App)
+- iOS Safari
+- Android Chrome
+- Responsive: 320px - 428px viewport width
+
+
+--------------------------------------------------------------------------------
+9.2 Technology Stack (Recommended)
+--------------------------------------------------------------------------------
+
+FRONTEND
+- Framework: React 18+ with TypeScript
+- Animation: Framer Motion (physics-based springs)
+- Styling: CSS Modules or Tailwind CSS (grayscale config)
+- State: Zustand or React Context (lightweight)
+- Gestures: react-use-gesture or native touch events
+
+BUILD TOOLING
+- Vite (fast development, optimized builds)
+- TypeScript strict mode
+- ESLint + Prettier
+
+BACKEND (Future)
+- API: Node.js with Express or Fastify
+- Database: PostgreSQL (relational data) + optional graph DB for network
+- Authentication: OAuth 2.0 (Google, Apple sign-in)
+- Hosting: Vercel (frontend), Railway or Render (backend)
+
+--------------------------------------------------------------------------------
+9.3 Animation Specifications
+--------------------------------------------------------------------------------
+
+SPRING CONFIGURATIONS (Framer Motion syntax)
+
+Default squish (button press):
+{
+  type: "spring",
+  stiffness: 400,
+  damping: 17
+}
+
+Blob wobble (idle):
+{
+  type: "spring",
+  stiffness: 100,
+  damping: 10,
+  mass: 1
+}
+
+Page transition:
+{
+  type: "spring",
+  stiffness: 300,
+  damping: 30
+}
+
+Split animation:
+{
+  type: "spring",
+  stiffness: 200,
+  damping: 20,
+  staggerChildren: 0.05
+}
+
+Merge animation:
+{
+  type: "spring",
+  stiffness: 150,
+  damping: 25
+}
+
+SQUISH BEHAVIOR
+
+On press:
+- Scale X: 1.1
+- Scale Y: 0.9
+- Duration: 100ms to squished state
+
+On release:
+- Return to scale 1.0
+- Spring physics for overshoot and settle
+- Total settle time: ~300ms
+
+--------------------------------------------------------------------------------
+9.4 Gesture Handling
+--------------------------------------------------------------------------------
+
+SWIPE DETECTION
+- Minimum distance: 50px
+- Maximum duration: 300ms
+- Angle tolerance: 30° from cardinal direction
+
+SWIPE RESPONSE
+- Elastic resistance at boundaries (no content beyond)
+- Momentum: velocity-based animation distance
+- Snap threshold: 30% of screen width/height
+
+TOUCH FEEDBACK
+- Immediate visual response on touch start (<16ms)
+- Squish begins on touch, completes on release
+- No delay for tap detection
+
+--------------------------------------------------------------------------------
+9.5 Data Models
+--------------------------------------------------------------------------------
+
+LOT OBJECT
+{
+  id: string (UUID),
+  externalId: string (user-facing ID, e.g., "ETH-YRG-2024-0847"),
+  
+  origin: {
+    country: string,
+    region: string,
+    subregion: string | null,
+    farm: string | null,
+    producer: string,
+    coordinates: { lat: float, lng: float } | null,
+    altitude: { min: integer, max: integer, unit: "masl" }
+  },
+  
+  coffee: {
+    varietal: string[],
+    processing: string,
+    dryingMethod: string | null,
+    harvestStart: date,
+    harvestEnd: date
+  },
+  
+  quality: {
+    officialScore: float | null,
+    flavorNotes: string[],
+    certifications: string[]
+  },
+  
+  supplyChain: {
+    stages: Stage[]  // see Stage object below
+  },
+  
+  visibility: {
+    score: integer (0-100),
+    lastUpdated: datetime,
+    contributors: string[] (participant IDs)
+  },
+  
+  metadata: {
+    createdAt: datetime,
+    updatedAt: datetime,
+    createdBy: string (user ID)
+  }
+}
+
+STAGE OBJECT
+{
+  id: string,
+  type: enum (
+    "harvest", "processing", "drying", "milling",
+    "export", "shipping", "import", "warehousing", "roasting", "retail"
+  ),
+  participant: {
+    id: string,
+    name: string,
+    type: enum ("producer", "processor", "exporter", "shipper", 
+                "importer", "warehouse", "roaster", "retailer")
+  },
+  timestamp: datetime,
+  location: { lat: float, lng: float } | null,
+  data: object (stage-specific data, schema varies by type),
+  documents: string[] (URLs to attached files),
+  verified: boolean,
+  verifiedBy: string | null
+}
+
+USER OBJECT
+{
+  id: string,
+  email: string,
+  displayName: string,
+  organizationType: enum ("roaster", "importer", "producer", "other"),
+  organizationName: string | null,
+  connections: string[] (user IDs),
+  inventory: string[] (lot IDs),
+  settings: {
+    defaultProtocol: string,
+    notifications: boolean
+  },
+  createdAt: datetime
+}
+
+--------------------------------------------------------------------------------
+9.6 Accessibility Considerations
+--------------------------------------------------------------------------------
+
+MOTION SENSITIVITY
+- Respect prefers-reduced-motion media query
+- Provide toggle in settings to disable animations
+- Reduced motion mode: instant transitions, no wobble
+
+SCREEN READER SUPPORT
+- All interactive elements have aria-labels
+- Swipe alternatives: button controls for navigation
+- Announce page transitions and data changes
+
+CONTRAST
+- Black on white exceeds WCAG AAA (21:1 ratio)
+- Ensure gray tones maintain minimum 4.5:1 for text
+- Visibility score opacity must not reduce text contrast below threshold
+
+TOUCH TARGETS
+- Minimum 44x44px for all interactive elements
+- Adequate spacing between targets (minimum 8px)
+
+================================================================================
+10. IMPLEMENTATION PHASES
+================================================================================
+
+--------------------------------------------------------------------------------
+Phase 1: Visual Foundation (Weeks 1-3)
+--------------------------------------------------------------------------------
+
+DELIVERABLES
+- Component library: Blob, Button, Card, Typography
+- Animation system: squish, wobble, spring configurations
+- Grayscale design tokens (colors, spacing, typography)
+- Shape morphing utilities (circle ↔ square ↔ triangle)
+
+ACCEPTANCE CRITERIA
+- Blob component responds to tap with squish animation
+- Shapes morph smoothly between forms
+- All animations respect prefers-reduced-motion
+- Visual consistency across components
+
+--------------------------------------------------------------------------------
+Phase 2: Core Navigation (Weeks 4-6)
+--------------------------------------------------------------------------------
+
+DELIVERABLES
+- Swipe gesture detection and handling
+- Horizontal timeline navigation (lot stages)
+- Vertical layer navigation (inventory, global placeholder)
+- Page transition animations
+- Timeline position indicator
+
+ACCEPTANCE CRITERIA
+- Swipe in four directions triggers correct navigation
+- Elastic resistance at content boundaries
+- Smooth transitions between views
+- Position indicator reflects current location
+
+--------------------------------------------------------------------------------
+Phase 3: Lot Detail Views (Weeks 7-9)
+--------------------------------------------------------------------------------
+
+DELIVERABLES
+- Individual stage view components (one per stage type)
+- Lot header with growth visualization
+- Visibility score display
+- Split/merge interaction for data drill-down
+
+ACCEPTANCE CRITERIA
+- Each stage displays appropriate data
+- Lot blob size reflects data richness (growth mechanic)
+- Visibility score renders correctly (opacity, edge treatment)
+- Split/merge animations function smoothly
+
+--------------------------------------------------------------------------------
+Phase 4: Data Layer (Weeks 10-12)
+--------------------------------------------------------------------------------
+
+DELIVERABLES
+- Data models implemented (Lot, Stage, User)
+- Local state management
+- Mock data for development
+- API contract definition (even if backend not built)
+
+ACCEPTANCE CRITERIA
+- App functions with mock data
+- Data flows correctly through components
+- Visibility score calculates from data
+- Growth metric derives from data completeness
+
+--------------------------------------------------------------------------------
+Phase 5: Cupping Suite (Weeks 13-16)
+--------------------------------------------------------------------------------
+
+DELIVERABLES
+- Cupping protocol interface
+- Attribute scoring interaction
+- Score summary view
+- Comparison views (personal vs. official, multiple scores)
+
+ACCEPTANCE CRITERIA
+- User can complete full cupping session
+- Scores save correctly
+- Comparison view displays multiple scores
+- Blob transforms to square in cupping context
+
+--------------------------------------------------------------------------------
+Phase 6: Inventory and User Features (Weeks 17-20)
+--------------------------------------------------------------------------------
+
+DELIVERABLES
+- Inventory grid/list view
+- Lot filtering and search
+- User profile and settings
+- User connections (add/view collaborators)
+
+ACCEPTANCE CRITERIA
+- User can view all tracked lots
+- Filtering narrows lot display
+- Settings persist across sessions
+- Connections display and function
+
+--------------------------------------------------------------------------------
+Phase 7: Backend Integration (Weeks 21-26)
+--------------------------------------------------------------------------------
+
+DELIVERABLES
+- API implementation (Node.js or similar)
+- Database setup (PostgreSQL)
+- Authentication (OAuth)
+- Real data integration
+
+ACCEPTANCE CRITERIA
+- App connects to live backend
+- User can sign in and data persists
+- Lots sync across devices
+- Performance acceptable (<2s initial load)
+
+--------------------------------------------------------------------------------
+Phase 8: Global View and Network (Weeks 27-32)
+--------------------------------------------------------------------------------
+
+DELIVERABLES
+- Database schema for lot relationships
+- Network query implementation
+- Global view visualization
+- Related lot discovery
+
+ACCEPTANCE CRITERIA
+- Global view displays lot relationships
+- User can navigate to related lots
+- Network queries perform acceptably
+- Visualization maintains black-and-white aesthetic
+
+================================================================================
+11. OPEN QUESTIONS
+================================================================================
+
+The following items require decisions before or during implementation:
+
+DESIGN
+- Should the coffee cherry mascot from the prototype appear anywhere?
+- How should lots with zero visibility score appear? Invisible? Dotted outline?
+- Should there be sound design? (Squishy sounds on interaction?)
+
+DATA
+- Who can add stages to a lot? Only participants? Any user?
+- How is verification performed? Manual review? Automated checks?
+- What happens when participants report conflicting data?
+
+BUSINESS
+- Is there a freemium model? What features are gated?
+- How do producers/farmers onboard? Mobile app? SMS?
+- What's the revenue model for sustainability?
+
+TECHNICAL
+- Native app priority? PWA sufficient for MVP?
+- Offline support requirements? (Important for farm-level data entry)
+- Integration with existing systems (trading platforms, ERP)?
+
+NETWORK/GLOBAL VIEW
+- What relationship types matter most to users?
+- How far back in supply chain should connections trace?
+- Should similarity be computed (cupping profiles) or only explicit relationships?
+
+================================================================================
+END OF DOCUMENT
+================================================================================
