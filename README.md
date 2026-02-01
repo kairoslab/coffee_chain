@@ -1,6 +1,6 @@
 # CoffeeChain
 
-A mobile app for coffee supply chain transparency featuring a playful, tactile interface inspired by LocoRoco. Track coffee lots from farm to cup through intuitive swipe-based navigation.
+Proof-of-concept demo for a mobile app adressing coffee supply chain transparency. Track coffee lots from farm to cup through swipe-based navigation.
 
 ## Design Philosophy
 
