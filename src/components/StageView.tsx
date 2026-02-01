@@ -46,6 +46,11 @@ interface StageViewProps {
   // Blob label (e.g., lot ID abbreviation)
   blobLabel?: string;
 
+  // Verification status (determines blob variant per spec Section 3.3)
+  // - verified: filled (black bg, white text) = "complete data"
+  // - unverified: outlined (white bg, black text) = "unreviewed"
+  verified?: boolean;
+
   // Interactions
   onBlobPress?: () => void;
   onBlobLongPress?: () => void;
@@ -67,6 +72,7 @@ export function StageView({
   tertiaryDetail,
   shape = 'circle',
   blobLabel,
+  verified = false,
   onBlobPress,
   onBlobLongPress,
   translateX,
@@ -93,13 +99,14 @@ export function StageView({
       {/* Main Content Area */}
       <View style={styles.mainContent}>
         {/* Lot Blob */}
+        {/* Per spec Section 3.3: verified = filled (complete), unverified = outlined (unreviewed) */}
         <View style={styles.blobContainer}>
           <Blob
             growthUnits={growthUnits}
             visibilityScore={visibilityScore}
             shape={shape}
             label={blobLabel}
-            variant="filled"
+            variant={verified ? 'filled' : 'outlined'}
             onPress={onBlobPress}
             onLongPress={onBlobLongPress}
           />

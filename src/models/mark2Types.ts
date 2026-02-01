@@ -227,6 +227,7 @@ export function calculateGrowthUnits(lot: Lot): number {
 
 /**
  * Base score points per documented stage (max 60)
+ * Per spec Section 5.2, Farm/Producer documentation is valued at 8 points
  */
 const STAGE_POINTS: Record<StageType, number> = {
   harvest: 6,
@@ -238,8 +239,14 @@ const STAGE_POINTS: Record<StageType, number> = {
   import: 6,
   warehousing: 4,
   roasting: 4,
-  retail: 8,
+  retail: 4, // Reduced from 8 to balance with producer documentation
 };
+
+/**
+ * Producer documentation score (separate from stages)
+ * Spec values Farm/Producer identification at 8 points
+ */
+const PRODUCER_DOCUMENTATION_POINTS = 8;
 
 /**
  * Verification type bonus points (max 20)
@@ -261,6 +268,14 @@ export function calculateVisibilityScore(
 ): number {
   // BASE SCORE (max 60)
   let baseScore = 0;
+
+  // Producer documentation (spec Section 5.2: Farm/Producer = 8 points)
+  // Philosophical alignment: spec treats producer documentation as valuable
+  if (lot.origin.producer && lot.origin.producer.trim() !== '') {
+    baseScore += PRODUCER_DOCUMENTATION_POINTS;
+  }
+
+  // Stage points
   for (const stage of lot.supplyChain.stages) {
     baseScore += STAGE_POINTS[stage.type] || 0;
   }
