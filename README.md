@@ -1,174 +1,216 @@
-# CoffeeChain ☕⛓️
+# CoffeeChain
 
-A mobile app for coffee supply chain transparency. Track coffee lots from farm to cup, understand price distribution, and connect with every actor in the chain.
+A mobile app for coffee supply chain transparency featuring a playful, tactile interface inspired by LocoRoco. Track coffee lots from farm to cup through intuitive swipe-based navigation.
 
-## Core Concepts
+## Design Philosophy
 
-### Lot-Centric Model
-Unlike apps that track "varieties" (botanical categories), CoffeeChain tracks **Lots** — specific batches from a specific farm, harvested at a specific time, processed a specific way. This enables true traceability.
+CoffeeChain follows the "mark2" specification: **serious data presented through joyful, tactile interaction**.
 
-### Lifecycle States
-Every lot progresses through a defined lifecycle:
+### Core Principles
+
+1. **Lot-Centric Model**: The lot is the universe. Unlike apps that track botanical varieties, CoffeeChain tracks specific batches from specific farms, harvested at specific times.
+
+2. **One Feature Per Screen**: Each view shows a single piece of information prominently. Navigate by swiping, not scrolling through crowded interfaces.
+
+3. **Grayscale Aesthetic**: Black, white, and grays only. No color distractions - clarity through simplicity.
+
+4. **Physicality Through Animation**: Blobs squish on touch, bounce on navigation. The interface feels alive and responsive.
+
+5. **Transparency as Growth**: More documented data = larger blob. Visual feedback for supply chain completeness.
+
+## Visual Language
+
+### The Blob
+
+The core visual element - a soft, responsive shape representing a coffee lot.
+
+- **Size**: Reflects data richness (0-20 growth units)
+- **Shape**: Circle (default), Square (cupping/structured data), Triangle (alerts)
+- **Fill**: Filled (verified data) or Outlined (unverified/pending)
+- **Opacity**: Visibility score affects visual prominence (0-100)
+
+### Navigation
+
+- **Swipe Left**: Next stage / Enter cupping
+- **Swipe Right**: Previous stage / Return to inventory
+- **Swipe Up**: Open inventory
+- **Swipe Down**: Global network view
+- **Tap Blob**: Expand data details
+
+## Screens
+
+### Inventory (Default)
+Grid of tracked lots, each represented by a blob. Tap to enter timeline.
+
+### Lot Timeline (Primary)
+Horizontal swipe through supply chain stages:
 ```
-Harvested → Processed → Exported → Imported → Roasted → Retailed → Consumed
+Harvest -> Processing -> Drying -> Milling -> Export -> Shipping -> Import -> Warehousing -> Roasting -> Retail
 ```
 
-### Chain of Custody
-Each handoff between actors is recorded with:
-- Date and location
-- Price (optional but encouraged for transparency)
-- Verification status
-- Supporting documents
+### Cupping Suite
+SCA-style scoring interface accessed by swiping left past the final stage. Ten attributes, one per screen, with tap-to-increment scoring.
 
-### Actors
-Users identify by their role in the supply chain:
-- 🌱 **Producer** — Grows and harvests coffee
-- 🏭 **Processor** — Processes cherry to green
-- 📦 **Exporter** — Exports green coffee
-- 🚢 **Importer** — Imports to destination country
-- 🔥 **Roaster** — Roasts green to brown
-- 🛒 **Retailer** — Sells to consumers
-- ☕ **Consumer** — Enjoys the final cup
-
-## Features
-
-### For All Users
-- **Collection**: Track lots you own or are interested in
-- **Timeline View**: Visual chain-of-custody for any lot
-- **Freshness Indicator**: Know how fresh your roasted coffee is
-- **Search**: Find lots by origin, variety, or name
-
-### For Industry Professionals
-- **Price Transparency**: See value distribution across the chain
-- **Handoff Recording**: Document transfers between actors
-- **Verification**: Confirm data reported by others
-- **Interactions**: Add cupping notes, roast profiles, brew recipes
-
-## Tech Stack
-
-- **Framework**: React Native with Expo
-- **Navigation**: Expo Router (file-based)
-- **Database**: SQLite (expo-sqlite) — local-first, migrateable to Supabase
-- **Language**: TypeScript
+### Global View (Placeholder)
+Network visualization showing lot relationships and supply chain connections.
 
 ## Project Structure
 
 ```
 coffee-chain/
-├── app/                    # Expo Router screens
-│   ├── _layout.tsx        # Root layout with tabs
-│   ├── index.tsx          # Collection (home)
-│   ├── explore.tsx        # Search/discover lots
-│   ├── add.tsx            # Add new lot form
-│   ├── profile.tsx        # User profile & role
-│   └── lot/
-│       └── [id].tsx       # Lot detail with timeline
+├── app/                          # Expo Router entry points
+│   ├── _layout.tsx              # Root layout
+│   └── index.tsx                # Main screen with providers
 ├── src/
-│   ├── components/        # Reusable UI components
-│   │   ├── Timeline.tsx
-│   │   ├── FreshnessIndicator.tsx
-│   │   ├── PriceBreakdown.tsx
-│   │   └── LotCard.tsx
-│   ├── database/          # SQLite schema & operations
+│   ├── components/              # UI components
+│   │   ├── Blob.tsx            # Core blob element
+│   │   ├── StageView.tsx       # Stage display
+│   │   └── DataPanel.tsx       # Expandable data details
+│   ├── contexts/                # React contexts
+│   │   └── AccessibilityContext.tsx  # Reduced motion support
+│   ├── data/                    # Data layer
+│   │   ├── LotProvider.tsx     # Lot state management
+│   │   └── mockData.ts         # Demo data
+│   ├── database/                # SQLite persistence
 │   │   ├── schema.ts
-│   │   ├── operations.ts
-│   │   └── seed.ts
-│   ├── models/            # TypeScript types
-│   │   └── types.ts
-│   └── utils/             # Formatting & helpers
-│       └── formatting.ts
-├── app.json               # Expo config
-├── package.json
-└── tsconfig.json
+│   │   └── operations.ts
+│   ├── hooks/                   # Custom hooks
+│   │   └── useSwipeNavigation.ts
+│   ├── models/                  # TypeScript types
+│   │   └── mark2Types.ts       # Core data models
+│   ├── navigation/              # Navigation logic
+│   │   └── AppNavigator.tsx
+│   ├── screens/                 # Screen components
+│   │   ├── InventoryScreen.tsx
+│   │   ├── LotTimelineScreen.tsx
+│   │   └── CuppingScreen.tsx
+│   └── theme/                   # Design tokens
+│       └── index.ts
+├── SPEC_ANALYSIS.md             # Spec vs implementation analysis
+├── REMEDIATION_PLAN.md          # Technical roadmap
+└── coffee-chain-mark2           # Design specification
 ```
 
 ## Getting Started
 
 ### Prerequisites
-- Node.js 18+
+
+- Node.js 18 or higher
 - npm or yarn
-- Expo Go app on your phone (for testing)
+- Expo Go app on your mobile device (for testing on device)
 
 ### Installation
 
 ```bash
-# Clone or copy the project
+# Navigate to project directory
 cd coffee-chain
 
 # Install dependencies
 npm install
+```
 
-# Start the development server
+### Running the App
+
+```bash
+# Start Expo development server
 npx expo start
 ```
 
-### Testing
+Then:
+- **On Phone**: Scan QR code with Expo Go (Android) or Camera (iOS)
+- **Web**: Press `w` to open in browser
+- **iOS Simulator**: Press `i` (requires Xcode)
+- **Android Emulator**: Press `a` (requires Android Studio)
 
-1. **On Phone**: Scan the QR code with Expo Go (Android) or Camera app (iOS)
-2. **Web Preview**: Press `w` to open in browser
-3. **Simulator**: Press `i` for iOS simulator or `a` for Android emulator (requires setup)
+### Demo Experience
 
-### Loading Demo Data
+The app loads with three sample lots demonstrating different stages of the supply chain:
 
-The app includes seed data for demonstration. To load it:
+1. **Ethiopia Yirgacheffe** - High visibility, multiple verified stages
+2. **Colombia Huila** - Medium visibility, recent cupping data
+3. **Kenya Nyeri** - Lower visibility, fewer documented stages
 
-1. Open the app
-2. Navigate to the Profile tab
-3. (In a future version) Tap "Load Demo Data"
+Try:
+- Tapping a lot in Inventory to enter its timeline
+- Swiping left/right to navigate stages
+- Tapping the blob to see detailed data
+- Swiping left past the final stage to enter Cupping
 
-Or modify `app/_layout.tsx` to call `seedDemoData()` on first launch.
+## Accessibility
+
+CoffeeChain respects system accessibility settings:
+
+- **Reduced Motion**: Animations are disabled when system preference is set
+- **High Contrast**: Grayscale design provides inherent contrast
+- **Screen Reader**: Semantic labels on interactive elements
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|------------|
+| Framework | React Native with Expo |
+| Navigation | Expo Router + Custom swipe |
+| State | React Context |
+| Database | SQLite (expo-sqlite) |
+| Animations | React Native Animated |
+| Language | TypeScript |
 
 ## Data Model
 
-### Core Entities
+### Core Types
 
-| Entity | Description |
-|--------|-------------|
-| **Lot** | A traceable batch of coffee |
-| **Actor** | A participant in the supply chain |
-| **Handoff** | Transfer of custody between actors |
-| **Interaction** | Cupping note, brew recipe, roast profile |
+| Type | Description |
+|------|-------------|
+| **Lot** | A traceable batch of coffee with origin, processing, and supply chain data |
+| **Stage** | A step in the supply chain with participant, timestamp, and verification |
+| **CuppingSession** | SCA-style quality scoring with 10 attributes |
 
-### Verification Levels
+### Visibility Score
 
-| Status | Icon | Meaning |
-|--------|------|---------|
-| Self-reported | 🔵 | Actor entered their own data |
-| Confirmed | ✅ | Verified by next actor in chain |
-| Documented | 📄 | Supporting documents attached |
-| Unverified | ❓ | No verification |
+Lots earn visibility points through documented data:
 
-## Roadmap
+| Component | Max Points |
+|-----------|------------|
+| Base (stages + producer) | 60 |
+| Verification bonus | 20 |
+| Recency bonus | 10 |
+| Participant diversity | 10 |
+| **Total** | **100** |
 
-### Phase 1 (Current) ✅
-- [x] Core data model
-- [x] Collection management
-- [x] Timeline visualization
-- [x] Basic forms
+### Growth Units
 
-### Phase 2
-- [ ] Camera integration for bag scanning
-- [ ] QR code generation for lots
-- [ ] Cloud sync (Supabase)
-- [ ] User authentication
+Blob size scales with data completeness (0-20 units):
+- Producer identification
+- Geographic coordinates
+- Altitude documentation
+- Varietal specification
+- Processing details
+- Export/import documentation
+- Quality scores
+- And more...
 
-### Phase 3
-- [ ] Social features (follow actors, share lots)
-- [ ] Market data integration (C-price, futures)
-- [ ] Computer vision for label reading
-- [ ] Multi-language support
+## Development Status
 
-## Design Principles
+### Implemented
+- Core blob component with squish animations
+- Swipe navigation (all 4 directions)
+- Lot timeline view
+- Inventory grid
+- Cupping suite with SCA scoring
+- Data panel for stage details
+- Reduced motion support
+- Mock data layer
 
-1. **Lot-centric**: Everything connects to a traceable batch
-2. **Trust through verification**: Multiple verification levels
-3. **Progressive disclosure**: Simple for consumers, detailed for pros
-4. **Offline-first**: Works without internet, syncs when available
-5. **Transparency by default**: Encourage price sharing
+### Planned
+- Database persistence
+- Split/merge blob animation
+- Growth outline visualization
+- Triangle shape via SVG
+- Settings screen with motion toggle
 
 ## Contributing
 
-This is an open project for coffee transparency. Contributions welcome!
+This is an open project for coffee transparency. Contributions are welcome.
 
 ## License
 
@@ -176,4 +218,4 @@ MIT
 
 ---
 
-Built with ☕ and curiosity about where it comes from.
+*Serious data. Joyful interaction. Coffee transparency.*

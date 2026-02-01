@@ -17,9 +17,10 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { View, StyleSheet, Animated } from 'react-native';
 import { StageView } from '../components/StageView';
+import { DataPanel } from '../components/DataPanel';
 import { useSwipeNavigation } from '../hooks/useSwipeNavigation';
 import { colors } from '../theme';
-import { StageType } from '../models/mark2Types';
+import { StageType, STAGE_LABELS } from '../models/mark2Types';
 
 // Stage data structure for display
 interface StageData {
@@ -28,6 +29,7 @@ interface StageData {
   secondaryContext?: string;
   tertiaryDetail?: string;
   hasData: boolean;
+  verified: boolean; // Determines blob variant per spec Section 3.3
 }
 
 // Lot data structure for the timeline
@@ -55,6 +57,7 @@ export function LotTimelineScreen({
   onNavigateBack,
 }: LotTimelineScreenProps) {
   const [currentStageIndex, setCurrentStageIndex] = useState(0);
+  const [showDataPanel, setShowDataPanel] = useState(false);
 
   // Get available stages (only those with data)
   const availableStages = useMemo(() => {
@@ -97,21 +100,45 @@ export function LotTimelineScreen({
     elasticBoundaries: true,
   });
 
-  // Blob press handler (split to show data details)
+  // Blob press handler - show data panel (pragmatic split alternative)
+  // Per spec section 4.2: "Single tap on a lot blob splits it into individual data points"
   const handleBlobPress = useCallback(() => {
-    // TODO: Implement split view to show individual data points
-    // Per spec section 4.2: "Single tap on a lot blob splits it into
-    // individual data points"
-    console.log('Blob pressed - would split into data points');
+    setShowDataPanel(true);
   }, []);
 
-  // Blob long press handler (merge back)
-  const handleBlobLongPress = useCallback(() => {
-    // TODO: Implement merge from split view
-    // Per spec section 4.2: "Press and hold on split view...
-    // Returns to default lot view"
-    console.log('Blob long pressed - would merge data points');
+  // Dismiss data panel
+  const handleDismissPanel = useCallback(() => {
+    setShowDataPanel(false);
   }, []);
+
+  // Blob long press handler (same as tap for now)
+  const handleBlobLongPress = useCallback(() => {
+    setShowDataPanel(true);
+  }, []);
+
+  // Build data fields for the current stage
+  const dataPanelFields = useMemo(() => {
+    if (!currentStage) return [];
+
+    const fields = [
+      { label: 'Primary', value: currentStage.primaryValue, verified: currentStage.verified },
+    ];
+
+    if (currentStage.secondaryContext) {
+      fields.push({ label: 'Participant', value: currentStage.secondaryContext });
+    }
+
+    if (currentStage.tertiaryDetail) {
+      fields.push({ label: 'Detail', value: currentStage.tertiaryDetail });
+    }
+
+    // Add lot-level context
+    fields.push({ label: 'Lot ID', value: lot.externalId });
+    fields.push({ label: 'Visibility Score', value: `${lot.visibilityScore}/100` });
+    fields.push({ label: 'Data Richness', value: `${lot.growthUnits}/20 units` });
+
+    return fields;
+  }, [currentStage, lot]);
 
   if (!currentStage) {
     // No stages available - this shouldn't happen for a valid lot
@@ -132,10 +159,19 @@ export function LotTimelineScreen({
         tertiaryDetail={currentStage.tertiaryDetail}
         shape="circle" // Supply chain stages use circle (cupping uses square)
         blobLabel={lot.externalId.slice(-4)}
+        verified={currentStage.verified}
         onBlobPress={handleBlobPress}
         onBlobLongPress={handleBlobLongPress}
         translateX={translateX}
         translateY={translateY}
+      />
+
+      {/* Data Panel - pragmatic alternative to spec's split/merge animation */}
+      <DataPanel
+        visible={showDataPanel}
+        title={STAGE_LABELS[currentStage.stage] || currentStage.stage}
+        fields={dataPanelFields}
+        onDismiss={handleDismissPanel}
       />
     </View>
   );

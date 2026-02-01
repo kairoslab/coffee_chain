@@ -17,6 +17,7 @@ import {
   ViewStyle,
 } from 'react-native';
 import { colors, blobSize, animations, squishParams, getVisibilityStyle, ShapeType } from '../theme';
+import { useReducedMotion } from '../contexts';
 
 interface BlobProps {
   // Size based on growth units (0-20) or explicit size
@@ -64,6 +65,9 @@ export function Blob({
   style,
   testID,
 }: BlobProps) {
+  // Per spec Section 9.6: respect reduced motion preference
+  const reducedMotion = useReducedMotion();
+
   // Animation values
   const scaleX = useRef(new Animated.Value(1)).current;
   const scaleY = useRef(new Animated.Value(1)).current;
@@ -75,8 +79,9 @@ export function Blob({
   const visibilityStyle = getVisibilityStyle(visibilityScore);
 
   // Squish animation on press
+  // Per spec Section 9.6: skip animation if reducedMotion is enabled
   const handlePressIn = useCallback(() => {
-    if (disabled) return;
+    if (disabled || reducedMotion) return;
 
     Animated.parallel([
       Animated.spring(scaleX, {
@@ -94,11 +99,11 @@ export function Blob({
         useNativeDriver: true,
       }),
     ]).start();
-  }, [disabled, scaleX, scaleY]);
+  }, [disabled, reducedMotion, scaleX, scaleY]);
 
   // Release animation
   const handlePressOut = useCallback(() => {
-    if (disabled) return;
+    if (disabled || reducedMotion) return;
 
     Animated.parallel([
       Animated.spring(scaleX, {
@@ -116,7 +121,7 @@ export function Blob({
         useNativeDriver: true,
       }),
     ]).start();
-  }, [disabled, scaleX, scaleY]);
+  }, [disabled, reducedMotion, scaleX, scaleY]);
 
   // Compute shape-specific styles
   const getShapeStyle = (): ViewStyle => {
