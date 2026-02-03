@@ -298,14 +298,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   stageLabel: {
+    fontFamily: typography.fontFamily.regular,
     fontSize: typography.fontSize.sm,
-    fontWeight: typography.fontWeight.semibold,
     color: colors.textMuted,
     letterSpacing: 2,
   },
   attributeLabel: {
+    fontFamily: typography.fontFamily.bold,
     fontSize: typography.fontSize['2xl'],
-    fontWeight: typography.fontWeight.bold,
     color: colors.textPrimary,
     marginTop: spacing[2],
   },
@@ -320,6 +320,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   hintText: {
+    fontFamily: typography.fontFamily.regular,
     fontSize: typography.fontSize.sm,
     color: colors.textMuted,
     marginBottom: spacing[1],
@@ -335,6 +336,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing[1],
   },
   scaleMark: {
+    fontFamily: typography.fontFamily.regular,
     fontSize: typography.fontSize.xs,
     color: colors.textMuted,
   },
@@ -371,6 +373,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.gray700,
   },
   navHint: {
+    fontFamily: typography.fontFamily.regular,
     textAlign: 'center',
     fontSize: typography.fontSize.xs,
     color: colors.textMuted,
@@ -387,14 +390,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   summaryTitle: {
+    fontFamily: typography.fontFamily.regular,
     fontSize: typography.fontSize.sm,
-    fontWeight: typography.fontWeight.semibold,
     color: colors.textMuted,
     letterSpacing: 2,
   },
   lotName: {
+    fontFamily: typography.fontFamily.bold,
     fontSize: typography.fontSize.lg,
-    fontWeight: typography.fontWeight.bold,
     color: colors.textPrimary,
     marginTop: spacing[2],
   },
@@ -403,8 +406,8 @@ const styles = StyleSheet.create({
     paddingVertical: spacing[8],
   },
   totalLabel: {
+    fontFamily: typography.fontFamily.bold,
     fontSize: typography.fontSize.lg,
-    fontWeight: typography.fontWeight.semibold,
     color: colors.textPrimary,
     marginTop: spacing[3],
   },
@@ -420,12 +423,13 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.gray100,
   },
   breakdownLabel: {
+    fontFamily: typography.fontFamily.regular,
     fontSize: typography.fontSize.base,
     color: colors.textSecondary,
   },
   breakdownScore: {
+    fontFamily: typography.fontFamily.bold,
     fontSize: typography.fontSize.base,
-    fontWeight: typography.fontWeight.semibold,
     color: colors.textPrimary,
   },
   actions: {
@@ -442,8 +446,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   cancelButtonText: {
+    fontFamily: typography.fontFamily.bold,
     fontSize: typography.fontSize.base,
-    fontWeight: typography.fontWeight.semibold,
     color: colors.black,
   },
   saveButton: {
@@ -454,8 +458,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   saveButtonText: {
+    fontFamily: typography.fontFamily.bold,
     fontSize: typography.fontSize.base,
-    fontWeight: typography.fontWeight.semibold,
     color: colors.white,
   },
 });

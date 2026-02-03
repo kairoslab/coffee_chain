@@ -196,8 +196,8 @@ const styles = StyleSheet.create({
     borderRadius: 2,
   },
   title: {
+    fontFamily: typography.fontFamily.bold,
     fontSize: typography.fontSize.lg,
-    fontWeight: typography.fontWeight.bold,
     color: colors.textPrimary,
     textAlign: 'center',
     marginBottom: spacing[4],
@@ -212,8 +212,8 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.gray100,
   },
   fieldLabel: {
+    fontFamily: typography.fontFamily.regular,
     fontSize: typography.fontSize.sm,
-    fontWeight: typography.fontWeight.medium,
     color: colors.textMuted,
     marginBottom: spacing[1],
   },
@@ -223,8 +223,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   fieldValue: {
+    fontFamily: typography.fontFamily.bold,
     fontSize: typography.fontSize.base,
-    fontWeight: typography.fontWeight.semibold,
     color: colors.textPrimary,
     flex: 1,
   },
@@ -236,12 +236,13 @@ const styles = StyleSheet.create({
     marginLeft: spacing[2],
   },
   verifiedText: {
+    fontFamily: typography.fontFamily.bold,
     fontSize: typography.fontSize.xs,
-    fontWeight: typography.fontWeight.semibold,
     color: colors.white,
     letterSpacing: 0.5,
   },
   hint: {
+    fontFamily: typography.fontFamily.regular,
     fontSize: typography.fontSize.xs,
     color: colors.textMuted,
     textAlign: 'center',

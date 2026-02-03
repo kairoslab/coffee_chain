@@ -37,6 +37,21 @@ The core visual element - a soft, responsive shape representing a coffee lot.
 - **Swipe Down**: Global network view
 - **Tap Blob**: Expand data details
 
+### Typography
+
+**Bitcount Single** - A pixel/bitmap font by Petr van Blokland (TYPETR).
+
+The font's geometric, digital aesthetic complements the playful LocoRoco-inspired interface while maintaining excellent legibility. Its monospaced character aligns with the technical nature of supply chain data.
+
+To enable custom typography:
+1. Obtain Bitcount Single font files from [TYPETR](https://www.typetr.com/fonts/bitcount)
+2. Place `.otf` files in `src/assets/fonts/`:
+   - `BitcountSingleCircle-Regular.otf`
+   - `BitcountSingleCircle-Bold.otf`
+3. Restart the Expo development server
+
+The app gracefully falls back to system fonts if custom fonts are not installed.
+
 ## Screens
 
 ### Inventory (Default)

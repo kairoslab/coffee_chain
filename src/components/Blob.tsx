@@ -16,7 +16,7 @@ import {
   Text,
   ViewStyle,
 } from 'react-native';
-import { colors, blobSize, animations, squishParams, getVisibilityStyle, ShapeType } from '../theme';
+import { colors, blobSize, animations, squishParams, getVisibilityStyle, ShapeType, typography } from '../theme';
 import { useReducedMotion } from '../contexts';
 
 interface BlobProps {
@@ -246,11 +246,11 @@ const styles = StyleSheet.create({
     transform: [{ rotate: '-45deg' }],
   },
   label: {
-    fontWeight: '600',
+    fontFamily: typography.fontFamily.bold,
     textAlign: 'center',
   },
   sublabel: {
-    fontWeight: '400',
+    fontFamily: typography.fontFamily.regular,
     textAlign: 'center',
     opacity: 0.8,
   },
