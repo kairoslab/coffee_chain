@@ -46,13 +46,18 @@ export const colors = {
  * The font's geometric, digital aesthetic complements the LocoRoco-inspired
  * playfulness while maintaining excellent legibility. Its monospaced feel
  * aligns with the technical nature of supply chain data.
+ *
+ * To enable custom fonts:
+ * 1. Add font files to src/assets/fonts/
+ * 2. Uncomment the font loading in src/hooks/useFonts.ts
+ * 3. Change fontFamily values below to 'BitcountSingle' and 'BitcountSingle-Bold'
  */
 export const typography = {
-  // Font family names (must match loaded font names in useFonts)
+  // Font family names
+  // Using system fonts until Bitcount Single files are added
   fontFamily: {
-    regular: 'BitcountSingle',
-    bold: 'BitcountSingle-Bold',
-    // Fallback to system if custom font not loaded
+    regular: 'System',  // Change to 'BitcountSingle' when fonts added
+    bold: 'System',     // Change to 'BitcountSingle-Bold' when fonts added
     system: 'System',
   },
 
