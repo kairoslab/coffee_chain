@@ -309,8 +309,8 @@ const styles = StyleSheet.create({
     paddingBottom: spacing[4],
   },
   title: {
+    fontFamily: typography.fontFamily.bold,
     fontSize: typography.fontSize['2xl'],
-    fontWeight: typography.fontWeight.bold,
     color: colors.textPrimary,
   },
   profileButton: {
@@ -328,15 +328,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   profileIconText: {
+    fontFamily: typography.fontFamily.bold,
     color: colors.white,
     fontSize: typography.fontSize.sm,
-    fontWeight: typography.fontWeight.semibold,
   },
   searchContainer: {
     paddingHorizontal: GRID_PADDING,
     paddingBottom: spacing[3],
   },
   searchInput: {
+    fontFamily: typography.fontFamily.regular,
     backgroundColor: colors.gray50,
     borderRadius: 8,
     paddingHorizontal: spacing[4],
@@ -360,6 +361,7 @@ const styles = StyleSheet.create({
     paddingBottom: spacing[3],
   },
   sortLabel: {
+    fontFamily: typography.fontFamily.regular,
     fontSize: typography.fontSize.sm,
     color: colors.textMuted,
     marginRight: spacing[2],
@@ -380,6 +382,7 @@ const styles = StyleSheet.create({
     borderColor: colors.black,
   },
   chipText: {
+    fontFamily: typography.fontFamily.regular,
     fontSize: typography.fontSize.sm,
     color: colors.textSecondary,
   },
@@ -395,12 +398,13 @@ const styles = StyleSheet.create({
     backgroundColor: colors.gray100,
   },
   sortChipText: {
+    fontFamily: typography.fontFamily.regular,
     fontSize: typography.fontSize.sm,
     color: colors.textMuted,
   },
   sortChipTextActive: {
+    fontFamily: typography.fontFamily.bold,
     color: colors.textPrimary,
-    fontWeight: typography.fontWeight.semibold,
   },
   gridContainer: {
     flex: 1,
@@ -420,14 +424,15 @@ const styles = StyleSheet.create({
     marginBottom: spacing[4],
   },
   lotName: {
+    fontFamily: typography.fontFamily.bold,
     fontSize: typography.fontSize.sm,
-    fontWeight: typography.fontWeight.semibold,
     color: colors.textPrimary,
     marginTop: spacing[2],
     textAlign: 'center',
     width: '100%',
   },
   lotOrigin: {
+    fontFamily: typography.fontFamily.regular,
     fontSize: typography.fontSize.xs,
     color: colors.textMuted,
     textAlign: 'center',
@@ -440,12 +445,13 @@ const styles = StyleSheet.create({
     paddingTop: spacing[20],
   },
   emptyText: {
+    fontFamily: typography.fontFamily.bold,
     fontSize: typography.fontSize.lg,
-    fontWeight: typography.fontWeight.semibold,
     color: colors.textPrimary,
     marginTop: spacing[4],
   },
   emptySubtext: {
+    fontFamily: typography.fontFamily.regular,
     fontSize: typography.fontSize.base,
     color: colors.textMuted,
     marginTop: spacing[1],
@@ -465,6 +471,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing[1],
   },
   swipeHint: {
+    fontFamily: typography.fontFamily.regular,
     fontSize: typography.fontSize.xs,
     color: colors.textMuted,
   },
