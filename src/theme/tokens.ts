@@ -41,22 +41,17 @@ export const colors = {
 // =============================================================================
 
 /**
- * Typography Configuration
+ * Bitcount Single Typography
  *
- * Currently uses system fonts (San Francisco on iOS, Roboto on Android).
- *
- * To enable Bitcount Single custom fonts:
- * 1. Add font files to src/assets/fonts/
- * 2. Enable loading in src/hooks/useFonts.ts
- * 3. Update fontFamily values below:
- *    - regular: 'BitcountSingle'
- *    - bold: 'BitcountSingle-Bold'
+ * A pixel/bitmap font by Petr van Blokland / TYPETR
+ * The font's geometric, digital aesthetic complements the LocoRoco-inspired
+ * playfulness while maintaining excellent legibility.
  */
 export const typography = {
-  // Font family names - using system fonts until custom fonts are added
+  // Font family names (loaded via useFonts hook)
   fontFamily: {
-    regular: 'System',
-    bold: 'System',
+    regular: 'BitcountSingle',
+    bold: 'BitcountSingle-Bold',
     system: 'System',
   },
 
