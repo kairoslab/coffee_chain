@@ -41,17 +41,22 @@ export const colors = {
 // =============================================================================
 
 /**
- * Bitcount Single - A pixel/bitmap font by Petr van Blokland / TYPETR
+ * Typography Configuration
  *
- * The font's geometric, digital aesthetic complements the LocoRoco-inspired
- * playfulness while maintaining excellent legibility. Its monospaced feel
- * aligns with the technical nature of supply chain data.
+ * Currently uses system fonts (San Francisco on iOS, Roboto on Android).
+ *
+ * To enable Bitcount Single custom fonts:
+ * 1. Add font files to src/assets/fonts/
+ * 2. Enable loading in src/hooks/useFonts.ts
+ * 3. Update fontFamily values below:
+ *    - regular: 'BitcountSingle'
+ *    - bold: 'BitcountSingle-Bold'
  */
 export const typography = {
-  // Font family names (loaded via useFonts hook)
+  // Font family names - using system fonts until custom fonts are added
   fontFamily: {
-    regular: 'BitcountSingle',
-    bold: 'BitcountSingle-Bold',
+    regular: 'System',
+    bold: 'System',
     system: 'System',
   },
 
