@@ -109,22 +109,24 @@ export const spacing = {
 // =============================================================================
 
 export const blobSize = {
-  // Based on growth mechanic: 48px min to 96px max
-  min: 48,
-  max: 96,
+  // Based on growth mechanic: 100px min to 220px max
+  // Per demo notes: blob size scale should be much larger on screen
+  min: 100,
+  max: 220,
 
-  // Standard sizes for different contexts
-  xs: 32,
-  sm: 48,
-  md: 64,
-  lg: 80,
-  xl: 96,
+  // Standard sizes for different contexts (scaled up)
+  xs: 60,
+  sm: 100,
+  md: 140,
+  lg: 180,
+  xl: 220,
 
   // Calculate size from growth units (0-20)
+  // Per demo notes: increase size more considerably based on data richness
   fromGrowth: (units: number): number => {
     const clamped = Math.max(0, Math.min(20, units));
-    const scale = 1 + (clamped * 0.05); // ranges from 1.0 to 2.0
-    return Math.round(48 * scale);
+    const scale = 1 + (clamped * 0.06); // ranges from 1.0 to 2.2
+    return Math.round(100 * scale);
   },
 } as const;
 

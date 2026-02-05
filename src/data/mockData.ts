@@ -92,6 +92,7 @@ export const MOCK_LOTS: Lot[] = [
       updatedAt: '2025-01-20T00:00:00Z',
       createdBy: 'user1',
     },
+    qualityEvents: [],
   },
   {
     id: '2',
@@ -155,6 +156,7 @@ export const MOCK_LOTS: Lot[] = [
       updatedAt: '2025-01-15T00:00:00Z',
       createdBy: 'user1',
     },
+    qualityEvents: [],
   },
   {
     id: '3',
@@ -197,5 +199,6 @@ export const MOCK_LOTS: Lot[] = [
       updatedAt: '2024-10-20T00:00:00Z',
       createdBy: 'user1',
     },
+    qualityEvents: [],
   },
 ];

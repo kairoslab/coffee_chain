@@ -78,6 +78,12 @@ export interface Lot {
     updatedAt: string; // ISO datetime
     createdBy: string; // user ID
   };
+
+  // Quality events including cupping sessions
+  qualityEvents: Array<{
+    type: 'cupping';
+    cuppingSession: CuppingSession;
+  }>;
 }
 
 // =============================================================================

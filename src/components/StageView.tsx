@@ -14,7 +14,7 @@
  */
 
 import React from 'react';
-import { View, Text, StyleSheet, Dimensions, Animated } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, Animated, GestureResponderHandlers } from 'react-native';
 import { Blob } from './Blob';
 import { colors, typography, spacing, ShapeType } from '../theme';
 import { StageType, STAGE_LABELS } from '../models/mark2Types';
@@ -58,6 +58,9 @@ interface StageViewProps {
   // Animation values from swipe
   translateX?: Animated.Value;
   translateY?: Animated.Value;
+
+  // Pan handlers for swipe navigation (per demo notes: only blob should trigger swipe)
+  panHandlers?: GestureResponderHandlers;
 }
 
 export function StageView({
@@ -77,20 +80,15 @@ export function StageView({
   onBlobLongPress,
   translateX,
   translateY,
+  panHandlers,
 }: StageViewProps) {
-  // Create animated style if translation values are provided
-  const animatedStyle =
-    translateX && translateY
-      ? {
-          transform: [{ translateX }, { translateY }],
-        }
-      : {};
-
   // Get human-readable stage label (uppercase for display)
   const stageLabel = STAGE_LABELS[stage]?.toUpperCase() || stage.toUpperCase();
 
+  // Per demo notes: only blob object should show motion, not the entire screen
+  // Animation is now applied to the Blob component, not the container
   return (
-    <Animated.View style={[styles.container, animatedStyle]}>
+    <View style={styles.container}>
       {/* Stage Label */}
       <View style={styles.stageHeader}>
         <Text style={styles.stageLabel}>{stageLabel}</Text>
@@ -100,6 +98,7 @@ export function StageView({
       <View style={styles.mainContent}>
         {/* Lot Blob */}
         {/* Per spec Section 3.3: verified = filled (complete), unverified = outlined (unreviewed) */}
+        {/* Per demo notes: only swiping on blob should trigger navigation */}
         <View style={styles.blobContainer}>
           <Blob
             growthUnits={growthUnits}
@@ -109,6 +108,9 @@ export function StageView({
             variant={verified ? 'filled' : 'outlined'}
             onPress={onBlobPress}
             onLongPress={onBlobLongPress}
+            panHandlers={panHandlers}
+            translateX={translateX}
+            translateY={translateY}
           />
         </View>
 
@@ -138,7 +140,7 @@ export function StageView({
           />
         ))}
       </View>
-    </Animated.View>
+    </View>
   );
 }
 

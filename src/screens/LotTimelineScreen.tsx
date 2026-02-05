@@ -120,7 +120,7 @@ export function LotTimelineScreen({
   const dataPanelFields = useMemo(() => {
     if (!currentStage) return [];
 
-    const fields = [
+    const fields: { label: string; value: string; verified?: boolean }[] = [
       { label: 'Primary', value: currentStage.primaryValue, verified: currentStage.verified },
     ];
 
@@ -145,8 +145,9 @@ export function LotTimelineScreen({
     return <View style={styles.emptyContainer} />;
   }
 
+  // Per demo notes: only swiping on blob should trigger navigation, not swiping on screen
   return (
-    <View style={styles.container} {...panHandlers}>
+    <View style={styles.container}>
       <StageView
         stage={currentStage.stage}
         stageIndex={currentStageIndex}
@@ -164,6 +165,7 @@ export function LotTimelineScreen({
         onBlobLongPress={handleBlobLongPress}
         translateX={translateX}
         translateY={translateY}
+        panHandlers={panHandlers}
       />
 
       {/* Data Panel - pragmatic alternative to spec's split/merge animation */}
