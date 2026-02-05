@@ -1,0 +1,20 @@
+Mark 2 Demo Tests Notes 
+
+Enhance functionality of user-friendly cupping suite. 
+A few design fixes would make this experience smooth. 
+One simple fix would be to adjust the increase and decrease
+button interactions. I like that the blob changes sizes;
+the size differences should be a bit more pronounced. 
+Also, decrease could change by steps of 0.5 instead.
+
+
+
+In stage view, to transition between stages, at the event of user's
+swipe, only blob object should show motion and only swiping on blob
+trigger navigation, not swiping on screen.  
+
+In stage view, Increase/decrease size of blob more considerably
+based on visibility score. 
+
+Blob size scale should be much larger on screen. 
+
