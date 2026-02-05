@@ -130,10 +130,10 @@ export function CuppingScreen({
   }, [currentAttribute.key]);
 
   const handleLongPress = useCallback(() => {
-    // Decrement by 0.25
+    // Decrement by 0.5 (per demo notes: decrease should change by steps of 0.5)
     setScores(prev => ({
       ...prev,
-      [currentAttribute.key]: Math.max(0, prev[currentAttribute.key] - 0.25),
+      [currentAttribute.key]: Math.max(0, prev[currentAttribute.key] - 0.5),
     }));
   }, [currentAttribute.key]);
 
@@ -143,7 +143,8 @@ export function CuppingScreen({
   }, [scores, totalScore, onComplete]);
 
   // Calculate blob size based on score (6 is baseline, score affects size)
-  const blobSize = 64 + (currentScore - 6) * 8;
+  // Per demo notes: size differences should be more pronounced
+  const blobSize = 120 + (currentScore - 6) * 20;
 
   if (showSummary) {
     return (
@@ -234,7 +235,7 @@ export function CuppingScreen({
 
           <View style={styles.scoreHints}>
             <Text style={styles.hintText}>Tap to increase (+0.25)</Text>
-            <Text style={styles.hintText}>Hold to decrease (-0.25)</Text>
+            <Text style={styles.hintText}>Hold to decrease (-0.5)</Text>
           </View>
 
           {/* Score Scale */}

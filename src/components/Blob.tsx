@@ -15,6 +15,7 @@ import {
   View,
   Text,
   ViewStyle,
+  GestureResponderHandlers,
 } from 'react-native';
 import { colors, blobSize, animations, squishParams, getVisibilityStyle, ShapeType, typography } from '../theme';
 import { useReducedMotion } from '../contexts';
@@ -49,6 +50,13 @@ interface BlobProps {
 
   // Test ID
   testID?: string;
+
+  // Pan handlers for swipe navigation (per demo notes: only blob should trigger swipe)
+  panHandlers?: GestureResponderHandlers;
+
+  // Animation values for swipe feedback
+  translateX?: Animated.Value;
+  translateY?: Animated.Value;
 }
 
 export function Blob({
@@ -64,6 +72,9 @@ export function Blob({
   disabled = false,
   style,
   testID,
+  panHandlers,
+  translateX: externalTranslateX,
+  translateY: externalTranslateY,
 }: BlobProps) {
   // Per spec Section 9.6: respect reduced motion preference
   const reducedMotion = useReducedMotion();
@@ -73,7 +84,11 @@ export function Blob({
   const scaleY = useRef(new Animated.Value(1)).current;
 
   // Calculate actual size
-  const actualSize = size ?? blobSize.fromGrowth(growthUnits);
+  // Per demo notes: increase/decrease size more considerably based on visibility score
+  const baseSize = size ?? blobSize.fromGrowth(growthUnits);
+  // Visibility score (0-100) adds up to 40% size boost at full visibility
+  const visibilityMultiplier = 0.7 + (visibilityScore / 100) * 0.5;
+  const actualSize = Math.round(baseSize * visibilityMultiplier);
 
   // Get visibility-based styling
   const visibilityStyle = getVisibilityStyle(visibilityScore);
@@ -160,6 +175,19 @@ export function Blob({
   // Text color based on variant
   const textColor = variant === 'filled' ? colors.white : colors.black;
 
+  // Build transform array including external translations if provided
+  const getTransformStyle = () => {
+    if (externalTranslateX && externalTranslateY) {
+      return [
+        { translateX: externalTranslateX },
+        { translateY: externalTranslateY },
+        { scaleX },
+        { scaleY },
+      ];
+    }
+    return [{ scaleX }, { scaleY }];
+  };
+
   return (
     <Pressable
       onPress={onPress}
@@ -168,6 +196,7 @@ export function Blob({
       onPressOut={handlePressOut}
       disabled={disabled && !onPress && !onLongPress}
       testID={testID}
+      {...panHandlers}
     >
       <Animated.View
         style={[
@@ -176,7 +205,7 @@ export function Blob({
             width: actualSize,
             height: actualSize,
             opacity: visibilityStyle.opacity,
-            transform: [{ scaleX }, { scaleY }],
+            transform: getTransformStyle(),
           },
           getShapeStyle(),
           getVariantStyle(),
