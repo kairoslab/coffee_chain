@@ -41,18 +41,17 @@ export const colors = {
 // =============================================================================
 
 /**
- * Bitcount Single - A pixel/bitmap font by Petr van Blokland / TYPETR
+ * Bitcount Single Typography
  *
+ * A pixel/bitmap font by Petr van Blokland / TYPETR
  * The font's geometric, digital aesthetic complements the LocoRoco-inspired
- * playfulness while maintaining excellent legibility. Its monospaced feel
- * aligns with the technical nature of supply chain data.
+ * playfulness while maintaining excellent legibility.
  */
 export const typography = {
-  // Font family names (must match loaded font names in useFonts)
+  // Font family names (loaded via useFonts hook)
   fontFamily: {
     regular: 'BitcountSingle',
     bold: 'BitcountSingle-Bold',
-    // Fallback to system if custom font not loaded
     system: 'System',
   },
 
